@@ -237,8 +237,8 @@ class Builder:
 
     def _build_tests_dag_mpi_operator(self):
         """Build the dag for the set of tests to run against a KF deployment."""
-
-        task_template = self._build_task_template()
+        ### OLD
+        #task_template = self._build_task_template()
 
         # ***************************************************************************
         # Test linting
@@ -251,7 +251,27 @@ class Builder:
 
         pylint_step["container"]["workingDir"] = os.path.join(
         self.src_dir)
+        ### OLD
 
+
+        # ***************************************************************************
+        # Test mnist
+        step_name = "mnist"
+        command = ["pytest", "mnist_gcp_test.py",
+                # Increase the log level so that info level log statements show up.
+                "--log-cli-level=info",
+                "--log-cli-format='%(levelname)s|%(asctime)s|%(pathname)s|%(lineno)d| %(message)s'",
+                # Test timeout in seconds.
+                "--timeout=1800",
+                "--junitxml=" + self.artifacts_dir + "/junit_mnist-gcp-test.xml",
+                ]
+
+
+        dependencies = []
+        mnist_step = self._build_step(step_name, self.workflow, TESTS_DAG_NAME, task_template,
+                                    command, dependencies)
+        mnist_step["container"]["workingDir"] = os.path.join(
+        self.src_dir, "py/kubeflow/examples/notebook_tests")
 
     def _build_exit_dag(self):
         """Build the exit handler dag"""
