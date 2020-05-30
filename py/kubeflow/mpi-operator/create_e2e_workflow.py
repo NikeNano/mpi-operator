@@ -237,40 +237,26 @@ class Builder:
 
     def _build_tests_dag_mpi_operator(self):
         """Build the dag for the set of tests to run against a KF deployment."""
-        ### OLD
-        #task_template = self._build_task_template()
 
-        # ***************************************************************************
-        # Test linting
-        
-        step_name = "py-lint"
-        command = ["python", "--version"]
-        dependencies = []
-        pylint_step = self._build_step(step_name, self.workflow, TESTS_DAG_NAME, task_template,
-                                    command, dependencies)
-
-        pylint_step["container"]["workingDir"] = os.path.join(
-        self.src_dir)
-        ### OLD
-
+        task_template = self._build_task_template()
 
         # ***************************************************************************
         # Test mnist
-        step_name = "mnist"
-        command = ["pytest", "mnist_gcp_test.py",
+        
+        step_name = "mpi-operator-e2e"
+        command = ["pytest", "mpioperator_notebook_test.py",
                 # Increase the log level so that info level log statements show up.
                 "--log-cli-level=info",
                 "--log-cli-format='%(levelname)s|%(asctime)s|%(pathname)s|%(lineno)d| %(message)s'",
                 # Test timeout in seconds.
                 "--timeout=1800",
-                "--junitxml=" + self.artifacts_dir + "/junit_mnist-gcp-test.xml",
+                "--junitxml=" + self.artifacts_dir + "/junit_mpi-operator-e2e.xml",
                 ]
 
-
         dependencies = []
-        mnist_step = self._build_step(step_name, self.workflow, TESTS_DAG_NAME, task_template,
+        mpioperator_e2e_step = self._build_step(step_name, self.workflow, TESTS_DAG_NAME, task_template,
                                     command, dependencies)
-        mnist_step["container"]["workingDir"] = os.path.join(
+        mpioperator_e2e_step["container"]["workingDir"] = os.path.join(
         self.src_dir, "py/kubeflow/examples/notebook_tests")
 
     def _build_exit_dag(self):

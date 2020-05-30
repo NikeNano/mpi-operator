@@ -5,7 +5,7 @@ import uuid
 
 import pytest
 
-from kubeflow.mpioperator.notebook_tests import nb_test_util
+from kubeflow.mpi-operator.notebook_tests import nb_test_util
 from kubeflow.testing import util
 
 def test_mnist_gcp(record_xml_attribute, name, namespace, # pylint: disable=too-many-branches,too-many-statements
